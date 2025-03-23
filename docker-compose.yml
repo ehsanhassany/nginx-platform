@@ -1,0 +1,29 @@
+---
+version: "3.8"
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: blogdb
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+  flask:
+    build: ./flask
+    ports:
+      - 5000:5000
+    depends_on:
+      - postgres
+    nginx:
+      build: ./nginx
+      ports:
+        - 80:80
+      depends_on:
+        - flask
+    adminer:
+      image: adminer
+      ports:
+        - 8080:8080
+      depends_on:
+        - postgres
